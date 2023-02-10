@@ -1,5 +1,6 @@
 const {STATUS} = require("../../api_response");
 const Field = require("../../model/Field");
+const Student = require("../../model/Student");
 
 module.exports.create_initial_object = async (req) => {
   try {
@@ -50,7 +51,9 @@ module.exports.get = async (req) => {
 
 module.exports.delete = async (req) => {
   try {
-    console.log("here", req.body);
+    let abc = {$unset: {[`custom_fields.${Object.values(req.body.field)[0]}`]: ""}};
+    console.log(abc);
+    await Student.updateMany({}, abc);
     return await Field.findOneAndUpdate(
       {},
       {$pull: {fields: req.body.field}},

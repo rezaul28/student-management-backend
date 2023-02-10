@@ -159,6 +159,7 @@ route.get("/get", async (req, res) => {
 
 route.put(
   "/edit",
+  validator.edit_validation,
   async (req, res) => {
     let result = await controller.edit(req);
     if (result.failed) {

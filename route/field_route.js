@@ -102,18 +102,13 @@ route.get("/get", async (req, res) => {
    *                  name: body
    *                  required: true
    *                  schema:
-   *                      type: object
-   *                      required:
-   *                          - field
+   *                      type: object   
    *                      properties:
    *                          field:
    *                              type: object
-   *                              required:
-   *                                  - title
    *                              properties:
    *                                  title:
    *                                      type: string
-   *                                      required : true
    *      responses:
    *          200:
    *              description: success

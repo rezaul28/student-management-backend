@@ -16,7 +16,7 @@ mongoose.connect(
     useUnifiedTopology: true,
   },
   async (error) => {
-    console.log("ERROR: ",error);
+    console.log("DB ERROR: ",error);
     console.log("db connected");
     await create_initial_object();
   }

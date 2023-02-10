@@ -7,7 +7,10 @@ const ObjectId = mongoose.Types.ObjectId;
 module.exports.create = async (req) => {
   let data = req.body;
   try {
-    return await new Student(data).save();
+    return await new Student({
+      ...data,
+      custom_fields: req.custom_fields,
+    }).save();
   } catch (error) {
     return {
       failed: true,
@@ -18,7 +21,7 @@ module.exports.create = async (req) => {
 };
 
 module.exports.get = async (req) => {
-  let {id, filter,sort} = req.query;
+  let {id, filter, sort} = req.query;
   try {
     let search_obj = {
       ...(filter && {
@@ -52,7 +55,7 @@ module.exports.get = async (req) => {
       };
     return await Student.find(search_obj).sort(sort_filter);
   } catch (error) {
-    console.log(error)
+    console.log(error);
     return {
       failed: true,
       status: STATUS.BAD_REQUEST,
@@ -64,20 +67,19 @@ module.exports.get = async (req) => {
 module.exports.edit = async (req) => {
   let data = req.body;
   try {
-    let admin = await Admin.findOneAndUpdate(
+    let student = await Student.findOneAndUpdate(
       {
-        _id: req.user._id,
+        _id: data.id,
       },
       {
-        $set: data,
+        $set: {...data, custom_fields: req.custom_fields},
       },
       {
         new: true,
         useFindAndModify: false,
       }
     ).lean();
-    delete admin.password;
-    return admin;
+    return student;
   } catch (error) {
     return {
       failed: true,
