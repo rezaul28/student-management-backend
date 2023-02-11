@@ -7,6 +7,7 @@ Welcome to the Node.js project! This project is built using Node.js, a powerful 
 To run this project, you need to have the following software installed on your machine:
 
 . Node.js (version 10 or later)
+
 . npm (version 6 or later)
 
 ## Installation
