@@ -13,9 +13,11 @@ To run this project, you need to have the following software installed on your m
 To install the project dependencies, follow these steps:
 
 1. Clone the repository to your local machine using the following command:
+
 git clone https://github.com/rezaul28/student-management-backend
 
 2. Navigate to the project directory:
+
 cd student-management-backend
 
 3. Install the dependencies using npm:
