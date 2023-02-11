@@ -103,10 +103,7 @@ route.get("/get", async (req, res) => {
   } else {
     res.send({
       total_document: result.length,
-      data: result.slice(
-        (page - 1) * ELEMENTS_PER_PAGE,
-        page * ELEMENTS_PER_PAGE
-      ),
+      data: result,
       page: Number(page),
     });
     return;
@@ -157,22 +154,19 @@ route.get("/get", async (req, res) => {
    */
 }
 
-route.put(
-  "/edit",
-  validator.edit_validation,
-  async (req, res) => {
-    let result = await controller.edit(req);
-    if (result.failed) {
-      res.status(result.status).send({
-        msg: result.msg,
-      });
-      return;
-    } else {
-      res.send(SUCCESS(result));
-      return;
-    }
+route.put("/edit", validator.edit_validation, async (req, res) => {
+  let result = await controller.edit(req);
+  console.log(result);
+  if (result.failed) {
+    res.status(result.status).send({
+      msg: result.msg,
+    });
+    return;
+  } else {
+    res.send(SUCCESS(result));
+    return;
   }
-);
+});
 
 {
   /**
@@ -193,19 +187,17 @@ route.put(
    */
 }
 
-route.delete(
-  "/delete",
-  async (req, res) => {
-    let result = await controller.delete(req);
-    if (result.failed) {
-      res.status(result.status).send({
-        msg: result.msg,
-      });
-      return;
-    } else {
-      res.send(SUCCESS(result));
-      return;
-    }
+route.delete("/delete", async (req, res) => {
+  console.log(req);
+  let result = await controller.delete(req);
+  if (result.failed) {
+    res.status(result.status).send({
+      msg: result.msg,
+    });
+    return;
+  } else {
+    res.send(SUCCESS(result));
+    return;
   }
-);
+});
 module.exports = route;

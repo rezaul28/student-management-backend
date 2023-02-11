@@ -23,6 +23,9 @@ module.exports.create = async (req) => {
       let abc = await this.delete({body: {field: {title: element.title}}});
       console.log(JSON.stringify(abc));
     }
+    let abc = {$set: {[`custom_fields.${req.body.field[0].title}`]: "NULL"}};
+    console.log(abc);
+    await Student.updateMany({}, abc);
     return await Field.findOneAndUpdate(
       {},
       {$push: {fields: {$each: req.body.field}}},
@@ -51,7 +54,9 @@ module.exports.get = async (req) => {
 
 module.exports.delete = async (req) => {
   try {
-    let abc = {$unset: {[`custom_fields.${Object.values(req.body.field)[0]}`]: ""}};
+    let abc = {
+      $unset: {[`custom_fields.${Object.values(req.body.field)[0]}`]: ""},
+    };
     console.log(abc);
     await Student.updateMany({}, abc);
     return await Field.findOneAndUpdate(

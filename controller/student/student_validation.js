@@ -30,8 +30,8 @@ const custom_fields = {
 };
 
 const create_validation = async (data) => {
+  console.log(data);
   data = delete_empty_field(data);
-
   const create_schema = Joi.object({...custom_fields});
   console.log(create_schema);
   const val = create_schema.validate(data);
@@ -52,11 +52,21 @@ module.exports.create_validation = async (req, res, next) => {
   }
 };
 
+const custom_fields_edit = {
+  id: Joi.objectId().required(),
+  name: Joi.string().min(STRING_MIN).max(STRING_MAX),
+  email: Joi.string().email(),
+  status: Joi.string().valid("Unconfirmed", "Admitted", "Terminated"),
+  phone: Joi.string()
+    .regex(/^01\d{9}$/)
+    .message("Phone number is invalid"),
+  class: Joi.string(),
+};
+
 const edit_validation = async (data) => {
-  custom_fields["id"] = Joi.objectId().required();
   data = delete_empty_field(data);
 
-  const create_schema = Joi.object({...custom_fields});
+  const create_schema = Joi.object({...custom_fields_edit});
   console.log(create_schema);
   const val = create_schema.validate(data);
   if (!!val.error) {
@@ -66,7 +76,7 @@ const edit_validation = async (data) => {
   }
 };
 module.exports.edit_validation = async (req, res, next) => {
-  req = await assign_custom_fields(req);
+  req = await assign_custom_fields_edit(req);
   const validation_error = await edit_validation(req.body);
   if (!!validation_error) {
     res.status(400).send(FAILURE(validation_error));
@@ -75,6 +85,31 @@ module.exports.edit_validation = async (req, res, next) => {
     next();
   }
 };
+
+async function assign_custom_fields_edit(req) {
+  let fields = await Field.findOne();
+  req["custom_fields"] = {};
+  for (let element of fields.fields) {
+    console.log(element.title);
+    console.log(req.body[element.title]);
+    req.custom_fields[element.title] = req.body[element.title];
+    switch (element.format) {
+      case "date":
+        custom_fields_edit[element.title] = Joi.date();
+        break;
+      case "number":
+        custom_fields_edit[element.title] = Joi.number();
+        break;
+      case "string":
+        custom_fields_edit[element.title] = Joi.string();
+        break;
+      case "boolean":
+        custom_fields_edit[element.title] = Joi.boolean();
+        break;
+    }
+  }
+  return req;
+}
 
 async function assign_custom_fields(req) {
   let fields = await Field.findOne();
@@ -85,16 +120,16 @@ async function assign_custom_fields(req) {
     req.custom_fields[element.title] = req.body[element.title];
     switch (element.format) {
       case "date":
-        custom_fields[element.title] = Joi.date().required();
+        custom_fields[element.title] = Joi.date();
         break;
       case "number":
-        custom_fields[element.title] = Joi.number().required();
+        custom_fields[element.title] = Joi.number();
         break;
       case "string":
-        custom_fields[element.title] = Joi.string().required();
+        custom_fields[element.title] = Joi.string();
         break;
       case "boolean":
-        custom_fields[element.title] = Joi.boolean().required();
+        custom_fields[element.title] = Joi.boolean();
         break;
     }
   }

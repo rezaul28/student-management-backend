@@ -6,6 +6,7 @@ const ObjectId = mongoose.Types.ObjectId;
 
 module.exports.create = async (req) => {
   let data = req.body;
+  console.log(data);
   try {
     return await new Student({
       ...data,
@@ -66,20 +67,28 @@ module.exports.get = async (req) => {
 
 module.exports.edit = async (req) => {
   let data = req.body;
+  let obj = {};
+  for (let x in req.custom_fields) {
+    if (req.custom_fields[x]) obj[`custom_fields.${x}`] = req.custom_fields[x];
+  }
+  console.log(obj);
   try {
     let student = await Student.findOneAndUpdate(
       {
         _id: data.id,
       },
       {
-        $set: {...data, custom_fields: req.custom_fields},
+        $set: {
+          ...data,
+          ...obj,
+        },
       },
       {
         new: true,
         useFindAndModify: false,
       }
     ).lean();
-    return student;
+    return student || "Successfully updated";
   } catch (error) {
     return {
       failed: true,
